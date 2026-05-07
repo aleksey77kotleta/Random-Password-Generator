@@ -43,3 +43,17 @@ class PasswordGeneratorApp:
 
         self.entry_result = tk.Entry(root, font=("Courier", 12), justify="center", width=30)
         self.entry_result.pack(pady=5)
+
+        # Таблица истории (используем Treeview)
+        tk.Label(root, text="История (последние 10):", font=("Arial", 10)).pack(pady=(15, 0))
+
+        self.tree = ttk.Treeview(root, columns=("Password"), show="headings", height=8)
+        self.tree.heading("Password", text="Сгенерированные пароли")
+        self.tree.column("Password", anchor="center")
+        self.tree.pack(pady=10, fill=tk.X, padx=20)
+
+        # 3. Загрузка истории при старте
+        self.load_history()
+
+    def update_length_label(self, val):
+        self.length_label.config(text=val)
