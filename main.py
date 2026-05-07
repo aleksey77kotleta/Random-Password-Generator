@@ -12,8 +12,7 @@ class PasswordGeneratorApp:
         self.root = root
         self.root.title("Генератор паролей")
         self.root.geometry("450x550")
-
-        self.history_file = "history.json"
+        self.history_file = "history.json"  # Путь исправлен: теперь файл в папке проекта
 
         # Элементы интерфейса
         # Ползунок длины пароля
@@ -81,3 +80,42 @@ class PasswordGeneratorApp:
         self.save_to_history(password)
 
     # Сохранение в JSON и загрузка
+    def save_to_history(self, password):
+        history = []
+        if os.path.exists(self.history_file):
+            with open(self.history_file, "r", encoding="utf-8") as f:
+                try:
+                    history = json.load(f)
+                except:
+                    history = []
+
+        history.insert(0, password)  # Добавляем новый в начало
+        history = history[:10]  # Храним только последние 10 для таблицы
+
+        with open(self.history_file, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=4, ensure_ascii=False)
+
+        self.refresh_table(history)
+
+    def load_history(self):
+        if os.path.exists(self.history_file):
+            with open(self.history_file, "r", encoding="utf-8") as f:
+                try:
+                    history = json.load(f)
+                    self.refresh_table(history)
+                except:
+                    pass
+
+    def refresh_table(self, history):
+        # Очистка таблицы
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        # Заполнение данными
+        for pwd in history:
+            self.tree.insert("", tk.END, values=(pwd,))
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PasswordGeneratorApp(root)
+    root.mainloop()
