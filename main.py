@@ -57,3 +57,27 @@ class PasswordGeneratorApp:
 
     def update_length_label(self, val):
         self.length_label.config(text=val)
+
+    # Логика генерации(библиотека random)
+    def generate(self):
+        length = self.length_slider.get()
+
+        # Собираем доступные символы
+        chars = ""
+        if self.var_digits.get(): chars += string.digits
+        if self.var_letters.get(): chars += string.ascii_letters
+        if self.var_spec.get(): chars += string.punctuation
+
+        if not chars:
+            messagebox.showwarning("Ошибка", "Выберите хотя бы один тип символов!")
+            return
+
+        # Генерация
+        password = "".join(random.choice(chars) for _ in range(length))
+
+        self.entry_result.delete(0, tk.END)
+        self.entry_result.insert(0, password)
+
+        self.save_to_history(password)
+
+    # Сохранение в JSON и загрузка
